@@ -1,10 +1,11 @@
 import pandas as pd 
 import matplotlib.pyplot as plt
 import seaborn as sns
+import numpy as np
 
 
 df = pd.read_csv("data/diamonds.csv")   ## Aquí simplemente cargamos los datos
-resumen = df.describe(include = "all").T    ## Hacemos la traspuesta para que la tabla sea más legible
+resumen = df.describe(include=[np.number]).T    ## Hacemos la traspuesta para que la tabla sea más legible
 resumen.to_csv("output/ej1_descriptivo.csv", index=True)    ## Lo pasamos a .csv con los nombres de las filas
 
 #df.info() ## Este comando nos da el número de NaNs, los dtypes, y el uso en memoria

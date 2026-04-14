@@ -4,4 +4,4 @@ Desviacion estandar del residuo: 3.2220429624963787
 Asimetria del residuo: -0.050917463365325315
 Kurtosis del residuo: -0.06102752286356239
 p-valor del test Augmented Dickey-Fuller: 0.0
-Test de normalidad Jacque-Bera: 0.5765607631123681
+Test de normalidad Jarque-Bera: 0.5765607631123681

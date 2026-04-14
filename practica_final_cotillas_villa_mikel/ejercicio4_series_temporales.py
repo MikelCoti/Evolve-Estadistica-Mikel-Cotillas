@@ -242,7 +242,7 @@ def analizar_residuo(residuo):
         f.write(f"Asimetria del residuo: {asimetria}\n")
         f.write(f"Kurtosis del residuo: {curtosis}\n")
         f.write(f"p-valor del test Augmented Dickey-Fuller: {p_value_adf}\n")
-        f.write(f"Test de normalidad Jacque-Bera: {p_valor_normalidad}\n")
+        f.write(f"Test de normalidad Jarque-Bera: {p_valor_normalidad}\n")
 
 
 # =============================================================================
