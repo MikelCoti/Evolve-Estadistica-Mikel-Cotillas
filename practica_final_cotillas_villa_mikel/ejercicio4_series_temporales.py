@@ -37,7 +37,12 @@ SALIDAS ESPERADAS (carpeta output/)
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from statsmodels.tsa.seasonal import seasonal_decompose
+from statsmodels.tsa.stattools import adfuller
 import matplotlib.gridspec as gridspec
+from scipy.stats import jarque_bera
+from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
+from scipy.stats import norm
 import os
 
 # Crear carpeta de salida si no existe
@@ -115,7 +120,15 @@ def visualizar_serie(serie):
     - Guarda con plt.savefig("output/ej4_serie_original.png", dpi=150, bbox_inches='tight')
     """
     # TODO: Implementa la visualización de la serie
-    pass
+    fig, ax = plt.subplots(figsize=(14, 4))
+    serie.plot(ax = ax)
+    ax.set_title("Serie temporal")
+    ax.set_xlabel("x")
+    ax.set_ylabel("y")
+    ax.grid(True)
+    fig.tight_layout()
+    fig.savefig("output/ej4_serie_original.png", dpi=150, bbox_inches='tight')
+    plt.close()
 
 
 # =============================================================================
@@ -144,11 +157,10 @@ def descomponer_serie(serie):
     - resultado.plot() genera los 4 subgráficos automáticamente
     - Guarda la figura con fig.savefig(...)
     """
-    # TODO: Implementa la descomposición
-    # resultado = seasonal_decompose(...)
-    # fig = resultado.plot()
-    # ...
-    pass
+    resultado = seasonal_decompose(serie, model = "additive", period = 365)
+    fig = resultado.plot()
+    fig.savefig("output/ej4_descomposiciones.png", dpi=150, bbox_inches='tight')
+    return resultado
 
 
 # =============================================================================
@@ -186,31 +198,51 @@ def analizar_residuo(residuo):
     - ACF / PACF:
         from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
     """
-    # TODO: Limpia el residuo (elimina NaN al inicio/fin)
-    residuo_limpio = None  # ← residuo.dropna()
+  
+    residuo_limpio = residuo.dropna()
 
-    # TODO: Calcula estadísticos básicos
-    media    = None
-    std      = None
-    asimetria = None
-    curtosis  = None
+    media    = residuo_limpio.mean()
+    std      = residuo_limpio.std()
+    asimetria = residuo_limpio.skew()
+    curtosis  = residuo_limpio.kurtosis()
 
+    resultado_adf = adfuller(residuo_limpio)
+    p_value_adf = resultado_adf[1]
 
-    # TODO: Test de estacionariedad (ADF)
-    # from statsmodels.tsa.stattools import adfuller
-    # resultado_adf = adfuller(residuo_limpio)
-    # p_adf = resultado_adf[1]
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 6))
+    plot_acf(residuo_limpio, lags=50, ax=ax1)
+    ax1.set_title('ACF — Función de Autocorrelación')
 
-    # TODO: Gráfico ACF y PACF del residuo → output/ej4_acf_pacf.png
-    pass
+    plot_pacf(residuo_limpio, lags=50, ax=ax2)
+    ax2.set_title('PACF — Autocorrelación Parcial')
 
-    # TODO: Histograma del residuo con curva normal superpuesta
-    # → output/ej4_histograma_ruido.png
-    # Pista: usa scipy.stats.norm.pdf para la curva teórica
-    pass
+    plt.tight_layout()
+    fig.savefig("output/ej4_acf_pacf.png", dpi=150, bbox_inches='tight')
+    plt.close()
 
-    # TODO: Guardar estadísticos en output/ej4_analisis.txt
-    pass
+    fig, ax = plt.subplots(figsize=(8, 4))
+    residuo_limpio.hist(bins=20, density = True, ax=ax)
+
+    x = np.linspace(residuo_limpio.min(), residuo_limpio.max(), 500)
+    y = norm.pdf(x, loc=media, scale=std)
+
+    ax.plot(x, y)
+    ax.set_title("Histograma y distribución normal")
+    ax.set_xlabel("Valor")
+    ax.set_ylabel("Densidad")
+    fig.savefig("output/ej4_histograma_ruido")
+    plt.close()
+
+    stat, p_valor_normalidad = jarque_bera(residuo_limpio)
+
+    with open("output/ej4_analisis.txt", "w") as f:
+        f.write("Metricas del residuo\n")
+        f.write(f"Media del residuo: {media}\n")
+        f.write(f"Desviacion estandar del residuo: {std}\n")
+        f.write(f"Asimetria del residuo: {asimetria}\n")
+        f.write(f"Kurtosis del residuo: {curtosis}\n")
+        f.write(f"p-valor del test Augmented Dickey-Fuller: {p_value_adf}\n")
+        f.write(f"Test de normalidad Jacque-Bera: {p_valor_normalidad}\n")
 
 
 # =============================================================================
