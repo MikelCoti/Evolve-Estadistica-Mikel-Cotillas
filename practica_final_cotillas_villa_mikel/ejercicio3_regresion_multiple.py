@@ -79,19 +79,30 @@ def regresion_lineal_multiple(X_train, y_train, X_test):
     - np.linalg.lstsq es numéricamente más estable que invertir directamente.
     """
 
-    # TODO: Paso 1 — Añadir columna de unos a X_train para el intercepto β₀
-    # Pista: np.ones((n, 1)) y np.hstack([ones, X_train])
-    X_train_b = None  # ← Reemplaza None con tu implementación
+    ## ¿Por qué estamos añadiendo una columna de 0s? Porque el coeficiente implícito del 
+    ## intercepto es 1 en la ecuación que queremos resolver, es decir, la fórmula es
+    ## y = b_0 * 1 + ..., donde ese 1 es el vector de unos, y luego el intercepto se calcula
+    ## en el paso dos.
+    n = len(y_train)
+    intercepto = np.ones((n,1))
+    X_train_b = np.hstack([intercepto, X_train])  # ← Reemplaza None con tu implementación
 
-    # TODO: Paso 2 — Calcular los coeficientes β con la fórmula OLS
-    # β = (XᵀX)⁻¹ Xᵀy
-    coefs = None  # ← Reemplaza None con tu implementación
 
-    # TODO: Paso 3 — Añadir columna de unos a X_test de la misma forma
-    X_test_b = None  # ← Reemplaza None con tu implementación
+    X_train_b_transpose = X_train_b.T
+    X_train_b_transpose_times_X_train_b = np.matmul(X_train_b_transpose, X_train_b)
+    inverse_matrix = np.linalg.inv(X_train_b_transpose_times_X_train_b)
+    total_matrix = np.matmul(inverse_matrix, X_train_b_transpose)
+    coefs = np.matmul(total_matrix, y_train)  # ← Reemplaza None con tu implementación
 
-    # TODO: Paso 4 — Calcular predicciones ŷ = X_test_b · β
-    y_pred = None  # ← Reemplaza None con tu implementación
+    ## Este paso es necesario por la misma razón por la que añadimos un array de 1s
+    ## en el primer paso, es el coeficiente del intercepto que vamos a predecir
+    n_test = len(X_test[:,1])
+    intercepto_test = np.ones((n_test,1))
+    X_test_b = np.hstack([intercepto_test, X_test])
+
+
+    y_pred = np.matmul(X_test_b, coefs)
+
 
     return coefs, y_pred
 
@@ -115,8 +126,11 @@ def calcular_mae(y_real, y_pred):
     -------
     float — Valor del MAE
     """
-    # TODO: Implementa el MAE sin usar sklearn
-    pass
+    coeficiente = 1/len(y_real)
+    resta = y_pred - y_real
+    valores_absolutos = np.abs(resta)
+    mae = np.sum(valores_absolutos)*coeficiente
+    return mae
 
 
 def calcular_rmse(y_real, y_pred):
@@ -134,9 +148,14 @@ def calcular_rmse(y_real, y_pred):
     -------
     float — Valor del RMSE
     """
-    # TODO: Implementa el RMSE sin usar sklearn
-    pass
-
+  
+    coeficiente = 1/len(y_real)
+    y_dif = y_pred - y_real
+    suma = 0
+    for element in y_dif:
+        suma += element**2
+    rmse = np.sqrt(coeficiente*suma)
+    return rmse
 
 def calcular_r2(y_real, y_pred):
     """
@@ -155,8 +174,19 @@ def calcular_r2(y_real, y_pred):
     -------
     float — Valor del R² (entre -∞ y 1; cuanto más cercano a 1, mejor)
     """
-    # TODO: Implementa el R² sin usar sklearn
-    pass
+
+    suma_res = 0
+    suma_tot = 0
+    y_res = y_real - y_pred
+    mean_array = np.full(y_real.shape, np.mean(y_real))
+    y_tot = y_real - mean_array
+    for element_res in y_res:
+        suma_res += element_res**2
+    for element_tot in y_tot:
+        suma_tot += element_tot**2
+    
+    r2 = 1 - suma_res/suma_tot
+    return r2
 
 
 # =============================================================================
@@ -182,7 +212,19 @@ def graficar_real_vs_predicho(y_real, y_pred, ruta_salida="output/ej3_prediccion
     #   - Dibuja la línea de referencia perfecta: y = x
     #   - Añade etiquetas a los ejes y título
     #   - Guarda con plt.savefig(ruta_salida, dpi=150, bbox_inches='tight')
-    pass
+    
+    x_min = min(min(y_real),min(y_pred))
+    x_max = max(max(y_real), max(y_pred))
+    x = np.linspace(x_min, x_max, 100)
+    y = x
+    plt.scatter(y_real, y_pred, alpha = 0.6)
+    plt.plot(x, y, color = "red")
+    plt.xlabel("Valores reales")
+    plt.ylabel("Valores predecidos")
+    plt.title("Scatterplot de valores")
+    plt.tight_layout()
+    plt.savefig(ruta_salida, dpi=150, bbox_inches='tight')
+    plt.close()
 
 
 # =============================================================================
@@ -233,14 +275,14 @@ if __name__ == "__main__":
     # Mostrar resultados en consola
     # -------------------------------------------------------------------------
     print("=" * 50)
-    print("RESULTADOS — Regresión Lineal Múltiple (NumPy)")
+    print("RESULTADOS — Regresion Lineal Multiple (NumPy)")
     print("=" * 50)
     print(f"\nCoeficientes reales:   {coefs_reales}")
     print(f"Coeficientes ajustados: {coefs}")
-    print(f"\nMétricas sobre test set:")
+    print(f"\nMetricas sobre test set:")
     print(f"  MAE  = {mae:.4f}")
     print(f"  RMSE = {rmse:.4f}")
-    print(f"  R²   = {r2:.4f}")
+    print(f"  R2   = {r2:.4f}")
 
     # -------------------------------------------------------------------------
     # RESULTADO DE REFERENCIA DEL PROFESOR
@@ -257,9 +299,9 @@ if __name__ == "__main__":
 
     # Fichero de coeficientes
     with open("output/ej3_coeficientes.txt", "w") as f:
-        f.write("Regresión Lineal Múltiple — Coeficientes ajustados\n")
+        f.write("Regresion Lineal Multiple — Coeficientes ajustados\n")
         f.write("=" * 50 + "\n")
-        nombres = ["Intercepto (β₀)"] + [f"β{i+1} (feature {i+1})" for i in range(n_features)]
+        nombres = ["Intercepto (b0)"] + [f"b{i+1} (feature {i+1})" for i in range(n_features)]
         for nombre, valor in zip(nombres, coefs):
             f.write(f"  {nombre}: {valor:.6f}\n")
         f.write("\nCoeficientes reales de referencia:\n")
@@ -268,11 +310,11 @@ if __name__ == "__main__":
 
     # Fichero de métricas
     with open("output/ej3_metricas.txt", "w") as f:
-        f.write("Regresión Lineal Múltiple — Métricas de evaluación\n")
+        f.write("Regresion Lineal Multiple — Metricas de evaluacion\n")
         f.write("=" * 50 + "\n")
         f.write(f"  MAE  : {mae:.6f}\n")
         f.write(f"  RMSE : {rmse:.6f}\n")
-        f.write(f"  R²   : {r2:.6f}\n")
+        f.write(f"  R2   : {r2:.6f}\n")
 
     # Gráfico
     graficar_real_vs_predicho(y_test, y_pred)

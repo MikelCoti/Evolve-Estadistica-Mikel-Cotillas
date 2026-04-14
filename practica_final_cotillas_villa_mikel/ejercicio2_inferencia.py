@@ -62,7 +62,7 @@ with open("output/ej2_metricas_regresion.txt", "w", encoding="utf-8") as f:
 
 residuos = target_test - target_predicted
 plt.figure(figsize=(8, 5))
-plt.scatter(target_predicted, residuos)
+plt.scatter(target_predicted, residuos, alpha = 0.5)
 plt.axhline(0, linestyle="--")
 plt.xlabel("Valores predecidos")
 plt.ylabel("Residuos")
