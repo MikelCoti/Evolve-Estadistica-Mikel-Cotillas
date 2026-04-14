@@ -7,7 +7,19 @@ df = pd.read_csv("data/diamonds.csv")   ## Aquí simplemente cargamos los datos
 resumen = df.describe(include = "all").T    ## Hacemos la traspuesta para que la tabla sea más legible
 resumen.to_csv("output/ej1_descriptivo.csv", index=True)    ## Lo pasamos a .csv con los nombres de las filas
 
-df.info() ## Este comando nos da el número de NaNs, los dtypes, y el uso en memoria
+#df.info() ## Este comando nos da el número de NaNs, los dtypes, y el uso en memoria
+
+## Esto nos dice si hay valores nulos en las dimensiones
+#print((df[["x", "y", "z", "price", "carat", "table"]] == 0).sum()) 
+
+## Como tenemos varias filas con dimensiones nulas, las eliminamos.
+df = df[(df[["x", "y", "z", "price"]] != 0).all(axis=1)]
+
+## Ahora vamos a ver si todos los datos categóricos son correctos.
+#print(df["cut"].unique())
+#print(df["clarity"].unique())
+#print(df["color"].unique())
+## Hemos comprobado que las variables categóricas no tienen problemas
 
 numeric_df = df.select_dtypes(include = "number")   ## Hacemos un dataframe solo con los valores
                                                     ## numéricos del dataframe original
