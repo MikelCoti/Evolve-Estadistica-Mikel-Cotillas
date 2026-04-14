@@ -26,7 +26,7 @@ kurtosis = numeric_df.kurtosis()
 
 numeric_df.hist(figsize = (12,8), bins = 20)    ## Escogemos bins = 20 porque parece interpretable
 plt.tight_layout()                              ## para todas las variables
-plt.savefig("ej1_histogramas.png", dpi=300, bbox_inches="tight")
+plt.savefig("output/ej1_histogramas.png", dpi=300, bbox_inches="tight")
 plt.close()     ## Para que no aparezcan en pantalla los histogramas
 
 columnas_categoricas = df.select_dtypes(include = ["str", "object", "category"]).columns   ## .columns devuelve
@@ -38,7 +38,7 @@ for columna in columnas_categoricas:
     sns.boxplot(data = df, x = columna, y = "price")
     plt.title(f"Price by {columna}")
     plt.tight_layout()
-    plt.savefig(f"ej1_boxplot_{columna}")
+    plt.savefig(f"output/ej1_boxplot_{columna}")
     plt.close()
 
 ## Como podemos ver en los boxplots estamos trabajando con un dataset con muchos outliers, 
@@ -56,7 +56,7 @@ for columna in columnas_categoricas:
     plt.pie(counts, labels = counts.index, autopct="%1.1f%%", startangle=90)
     plt.title(f"Pie chart of {columna}")
     plt.tight_layout()
-    plt.savefig(f"ej1_categoricas_{columna}.png", dpi=300, bbox_inches="tight")
+    plt.savefig(f"output/ej1_categoricas_{columna}.png", dpi=300, bbox_inches="tight")
     plt.close()
 
 corr_matrix = numeric_df.corr(method="pearson")
@@ -65,5 +65,5 @@ plt.figure(figsize=(10, 8))
 sns.heatmap(corr_matrix, annot=True, cmap="coolwarm", fmt=".2f")
 plt.title("Heatmap de las correlaciones de Pearson")
 plt.tight_layout()
-plt.savefig("ej1_heatmap_correlacion.png", dpi=300, bbox_inches="tight")
+plt.savefig("output/ej1_heatmap_correlacion.png", dpi=300, bbox_inches="tight")
 plt.close()
