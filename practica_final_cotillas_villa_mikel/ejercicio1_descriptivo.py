@@ -8,22 +8,36 @@ df = pd.read_csv("data/diamonds.csv")   ## Aquí simplemente cargamos los datos
 resumen = df.describe(include=[np.number]).T    ## Hacemos la traspuesta para que la tabla sea más legible
 resumen.to_csv("output/ej1_descriptivo.csv", index=True)    ## Lo pasamos a .csv con los nombres de las filas
 
-#df.info() ## Este comando nos da el número de NaNs, los dtypes, y el uso en memoria
+print("Output the df.info(): \n")
+df.info() ## Este comando nos da el número de NaNs, los dtypes, y el uso en memoria
+
+## Con este dataframe podemos guardar casi toda la información de df.info() en el .csv
+info_df = pd.DataFrame({
+    "column": df.columns,
+    "non_null_count": df.notna().sum().values,
+    "n_nulls": df.isna().sum().values,
+    "dtype": df.dtypes.astype(str).values
+})
+
+info_df.to_csv("output/ej1_descriptivo.csv", mode="a", header=False, index=False)
 
 ## Esto nos dice si hay valores nulos en las dimensiones
-#print((df[["x", "y", "z", "price", "carat", "table"]] == 0).sum()) 
+print("\nOutput de print((df[['x', 'y', 'z', 'price', 'carat', 'table']] == 0).sum()) \n")
+print((df[["x", "y", "z", "price", "carat", "table"]] == 0).sum()) 
 
 ## Como tenemos varias filas con dimensiones nulas, las eliminamos.
 df = df[(df[["x", "y", "z", "price"]] != 0).all(axis=1)]
 
 ## Ahora vamos a ver si todos los datos categóricos son correctos.
-#print(df["cut"].unique())
-#print(df["clarity"].unique())
-#print(df["color"].unique())
+print("\n Comprobación de las variables categóricas:\n")
+print(df["cut"].unique())
+print(df["clarity"].unique())
+print(df["color"].unique())
 ## Hemos comprobado que las variables categóricas no tienen problemas
 
 numeric_df = df.select_dtypes(include = "number")   ## Hacemos un dataframe solo con los valores
                                                     ## numéricos del dataframe original
+
 medias = numeric_df.mean()
 medianas = numeric_df.median()
 modas = numeric_df.mode()
@@ -33,9 +47,20 @@ minimo = numeric_df.min()
 maximo = numeric_df.max()
 cuartiles = numeric_df.quantile([0.25, 0.5, 0.75]).T
 iqr_objetivo = numeric_df["price"].quantile([0.25,0.75]).T  ## Rango intercuartílico
-
 skewness = numeric_df.skew()
 kurtosis = numeric_df.kurtosis()
+
+with open("output/ej1_metricas", "w") as f:
+    f.write(f"Medias:\n {medias}\n")
+    f.write(f"Medianas:\n {medianas}\n")
+    f.write(f"Modas:\n {modas}\n")
+    f.write(f"Desviacion tipica:\n {desviacion_tipica}\n")
+    f.write(f"Minimo:\n {minimo}\n")
+    f.write(f"Maximo:\n {maximo}\n")
+    f.write(f"Cuartiles:\n {cuartiles}\n")
+    f.write(f"Rango intercuartilico de la variable objetivo:\n {iqr_objetivo}\n")
+    f.write(f"Skewness:\n {skewness}\n")
+    f.write(f"Kurtosis:\n {kurtosis}\n")
 
 numeric_df.hist(figsize = (12,8), bins = 20)    ## Escogemos bins = 20 porque parece interpretable
 plt.tight_layout()                              ## para todas las variables
@@ -60,6 +85,7 @@ for columna in columnas_categoricas:
 ## de ninguna manera porque entonces estaríamos perdiendo mucha información.
 ## Probablemente lo que esté ocurriendo es que incluso si el corte es malo si el tamaño es grande
 ## puede seguir teniendo un valor muy elevado, por ejemplo.
+## Lidiaremos con este fenómeno en el ejercicio dos.
 
 
 ## Ahora trabajaremos con las frecuencias de las variables categóricas.
