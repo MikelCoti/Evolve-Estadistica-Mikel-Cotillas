@@ -39,7 +39,7 @@ plt.figure(figsize=(10, 8))
 sns.heatmap(corr_matrix, annot=True, cmap="coolwarm", fmt=".2f")
 plt.title("Heatmap de las correlaciones de Pearson")
 plt.tight_layout()
-# plt.show()   ## Hemos hecho otra vez el heatmap para asegurarnos de que no hay más colinearidad
+plt.savefig("output/ej2_matriz_correlaciones")  ## Hemos hecho otra vez el heatmap para asegurarnos de que no hay más colinearidad
 plt.close()
 
 ## Como los precios tienen escalas muy distintas a las demás variables vamos a 
@@ -150,5 +150,5 @@ ax.set_title("Histograma de residuos con normal ajustada")
 ax.set_xlabel("Residuos")
 ax.set_ylabel("Densidad")
 plt.tight_layout()
-fig.savefig("output/ej1_histograma_normalidad_residuos")
+fig.savefig("output/ej2_histograma_normalidad_residuos")
 plt.close()

@@ -26,7 +26,7 @@ print("\nOutput de print((df[['x', 'y', 'z', 'price', 'carat', 'table']] == 0).s
 print((df[["x", "y", "z", "price", "carat", "table"]] == 0).sum()) 
 
 ## Como tenemos varias filas con dimensiones nulas, las eliminamos.
-df = df[(df[["x", "y", "z", "price"]] != 0).all(axis=1)]
+df = df[(df[["x", "y", "z"]] != 0).all(axis=1)]
 
 ## Ahora vamos a ver si todos los datos categóricos son correctos.
 print("\n Comprobación de las variables categóricas:\n")
