@@ -110,6 +110,10 @@ Añade aqui tu descripción y analisis:
 
 ![alt text](image-3.png)
 
+> También podemos dibujar un Q-Q plot y ver que efectivamente los valores siguen una distribución normal.
+
+![alt text](image-4.png)
+
 ---
 
 *Fin del documento de respuestas*

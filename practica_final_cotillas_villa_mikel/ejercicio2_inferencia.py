@@ -9,6 +9,7 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_absolute_error, root_mean_squared_error, r2_score
+import scipy.stats as stats
 
 ## Leemos los datos y quitamos los 0s sin significado.
 df = pd.read_csv("data/diamonds.csv")
@@ -146,9 +147,19 @@ x = np.linspace(residuos.min(), residuos.max(), 500)
 ax.plot(x, norm.pdf(x, loc=mu, scale=sigma))
 
 ax.axvline(0, linestyle="--")
-ax.set_title("Histograma de residuos con normal ajustada")
+ax.set_title("Histograma de residuos con normal ajustada con carat2")
 ax.set_xlabel("Residuos")
 ax.set_ylabel("Densidad")
 plt.tight_layout()
-fig.savefig("output/ej2_histograma_normalidad_residuos")
+fig.savefig("output/ej2_histograma_normalidad_residuos_carat2")
 plt.close()
+
+## Pero si ahora hacemos un plot Q-Q vemos que una de las colas de la distribución no se corresponde
+## con el de una distribución normal. Es posible que entonces tuviéramos que añadir otro
+## término no lineal a nuestra regresión, pero no se me ocurre cuál, así que dejaré el trabajo así.
+
+fig, ax = plt.subplots(figsize=(6, 6))
+stats.probplot(residuos, dist="norm", plot=ax)
+ax.set_title("Q-Q plot de los residuos con carat2")
+plt.tight_layout()
+fig.savefig("output/ej2_Q-Q_plot_residuos_carat2")

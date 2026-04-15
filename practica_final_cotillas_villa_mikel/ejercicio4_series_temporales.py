@@ -42,6 +42,7 @@ from statsmodels.tsa.stattools import adfuller
 import matplotlib.gridspec as gridspec
 from scipy.stats import jarque_bera
 from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
+import scipy.stats as stats
 from scipy.stats import norm
 import os
 
@@ -119,7 +120,7 @@ def visualizar_serie(serie):
     - Añade título, etiquetas de ejes y una cuadrícula suave
     - Guarda con plt.savefig("output/ej4_serie_original.png", dpi=150, bbox_inches='tight')
     """
-    # TODO: Implementa la visualización de la serie
+    
     fig, ax = plt.subplots(figsize=(14, 4))
     serie.plot(ax = ax)
     ax.set_title("Serie temporal")
@@ -243,6 +244,12 @@ def analizar_residuo(residuo):
         f.write(f"Kurtosis del residuo: {curtosis}\n")
         f.write(f"p-valor del test Augmented Dickey-Fuller: {p_value_adf}\n")
         f.write(f"Test de normalidad Jarque-Bera: {p_valor_normalidad}\n")
+
+    fig, ax = plt.subplots(figsize=(6, 6))
+    stats.probplot(residuo_limpio, dist="norm", plot=ax)
+    ax.set_title("Q-Q plot de los residuos")
+    plt.tight_layout()
+    fig.savefig("output/ej4_Q-Q_plot_residuos")
 
 
 # =============================================================================
