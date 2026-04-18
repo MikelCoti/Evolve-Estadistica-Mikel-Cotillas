@@ -43,15 +43,19 @@ Por último hemos hecho una matriz de correlación.
 ---
 En este ejercicio hemos hecho dos modelos. La razón es la siguiente: 
 
-![alt text](image.png)
+![Plot residuos](output/ej2_residuos.png)
 
 Como podemos ver los residuos empiezan a sesgarse cuando los precios de los diamantes alcanzan un nivel lo suficientemente grande. En cambio los residuos tienen la siguiente forma cuando introducimos un término cuadrático del carat:
 
-![alt text](image-1.png)
+![Plot residuos carat2](output/ej2_residuos_carat2.png)
 
 No solo eso, si no que podemos comprobar que los residuos siguen una distribución normal alrededor del 0, que es lo que debería ocurrir según nos indica la teoría.
 
-![alt text](image-2.png)
+![Histograma residuos](output/ej2_histograma_normalidad_residuos_carat2.png)
+
+Pero sí es cierto que no es una distribución normal perfecta, como podemos ver en el siguiente Q-Q plot. Antes de enseñarlo, debemos explicar que un Q-Q plot dibuja los percentiles de una distribución dada con las de una distribución normal, y cuando más se acerquen a la recta y = x más normal es la distribución dada. No sé cómo corregir este error, es posible que se deba a que las categorías no estén balanceadas (las de peor calidad son muy pequeñas en número).
+
+![QQ plot residuos](output/ej2_Q-Q_plot_residuos_carat2.png)
 ---
 
 **Pregunta 2.1** — Indica los valores de MAE, RMSE y R² de la regresión lineal sobre el test set. ¿El modelo funciona bien? ¿Por qué?
@@ -66,13 +70,12 @@ No solo eso, si no que podemos comprobar que los residuos siguen una distribuci�
 ## Ejercicio 3 — Regresión Lineal Múltiple en NumPy
 
 ---
-Añade aqui tu descripción y analisis:
-
+Nada más que comentar más allá de lo que he respondido en las siguientes preguntas.
 ---
 
 **Pregunta 3.1** — Explica en tus propias palabras qué hace la fórmula β = (XᵀX)⁻¹ Xᵀy y por qué es necesario añadir una columna de unos a la matriz X.
 
-> La columna de unos es porque el intercepto necesita un coeficiente y se lo estamos añadiendo. Lo que hace la fórmula es resolver el problema Xb = y.
+> La columna de unos es porque el intercepto necesita un coeficiente y se lo estamos añadiendo. Lo que hace la fórmula es resolver el problema Xb = y. Primer haces X^tX b = X^t y para que encajen las dimensiones y luego inviertes y pasas todo al otro lado b = (X^t X)^-1 X^t y
 
 **Pregunta 3.2** — Copia aquí los cuatro coeficientes ajustados por tu función y compáralos con los valores de referencia del enunciado.
 
@@ -94,8 +97,7 @@ Añade aqui tu descripción y analisis:
 
 ## Ejercicio 4 — Series Temporales
 ---
-Añade aqui tu descripción y analisis:
-
+Nada más que añadir más allá de lo que he respondido en las preguntas.
 ---
 
 **Pregunta 4.1** — ¿La serie presenta tendencia? Descríbela brevemente (tipo, dirección, magnitud aproximada).
@@ -114,11 +116,11 @@ Añade aqui tu descripción y analisis:
 
 > El residuo sí que se ajusta a un ruido ideal, ya que el skewness y el kurtosis son ambos muy cercanos a cero (-0.051 y -0.061 respectivamente) y podemos dibujar los residuos en un histograma y compararlos con una distribución normal. La media es 0.12 y la desviación estándar es 3.2
 
-![alt text](image-3.png)
+![Histograma ruido serie temporal](output/ej4_histograma_ruido.png)
 
 > También podemos dibujar un Q-Q plot y ver que efectivamente los valores siguen una distribución normal.
 
-![alt text](image-4.png)
+![QQ plot ruido serie temporal](output/ej4_Q-Q_plot_residuos.png)
 
 ---
 
