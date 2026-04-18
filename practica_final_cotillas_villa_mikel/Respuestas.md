@@ -64,6 +64,8 @@ Pero sí es cierto que no es una distribución normal perfecta, como podemos ver
 
 > En cambio en el segundo modelo hemos introducido un término cuadrático del carat y tanto las métricas como el gráfico de residuos mejoraron notablemente: MAE = 0.112, RMSE = 0.144, R^2 = 0.9799
 
+> Por claridad, explicamos que el MAE significa "Mean Absolute Error", y como su nombre indica mide la media del valor absoluto del error que estamos cometiendo con nuestras predicciones. El RMSE significa "Root Mean Squared Error", y es la raíz cuadrada de la media de los errores al cuadrado que estamos cometiendo. Cogemos la raíz cuadrada para preservar las unidades. Por último está el R^2, que es una medida relativa que analiza cuanto mejor son nuestras predicciones en comparación de usar siempre la media para predecir.
+
 
 ---
 
@@ -120,7 +122,7 @@ Nada más que añadir más allá de lo que he respondido en las preguntas.
 
 > También podemos dibujar un Q-Q plot y ver que efectivamente los valores siguen una distribución normal.
 
-![QQ plot ruido serie temporal](output/ej4_Q-Q_plot_residuos.png)
+![Q-Q plot ruido serie temporal](output/ej4_Q-Q_plot_residuos.png)
 
 ---
 
