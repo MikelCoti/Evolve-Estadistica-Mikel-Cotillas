@@ -1,11 +1,11 @@
 Medias:
- carat       0.797698
-depth      61.749514
-table      57.456834
-price    3930.993231
-x           5.731627
-y           5.734887
-z           3.540046
+ carat       0.797940
+depth      61.749405
+table      57.457184
+price    3932.799722
+x           5.731157
+y           5.734526
+z           3.538734
 dtype: float64
 Medianas:
  carat       0.70
@@ -20,22 +20,22 @@ Modas:
     carat  depth  table  price     x     y    z
 0    0.3   62.0   56.0    605  4.37  4.34  2.7
 Desviacion tipica:
- carat       0.473795
-depth       1.432331
-table       2.234064
-price    3987.280446
-x           1.119423
-y           1.140126
-z           0.702530
+ carat       0.474011
+depth       1.432621
+table       2.234491
+price    3989.439738
+x           1.121761
+y           1.142135
+z           0.705699
 dtype: float64
 Minimo:
- carat      0.20
-depth     43.00
-table     43.00
-price    326.00
-x          3.73
-y          3.68
-z          1.07
+ carat      0.2
+depth     43.0
+table     43.0
+price    326.0
+x          0.0
+y          0.0
+z          0.0
 dtype: float64
 Maximo:
  carat        5.01
@@ -51,29 +51,29 @@ Cuartiles:
 carat    0.40     0.70     1.04
 depth   61.00    61.80    62.50
 table   56.00    57.00    59.00
-price  949.00  2401.00  5323.25
+price  950.00  2401.00  5324.25
 x        4.71     5.70     6.54
 y        4.72     5.71     6.54
 z        2.91     3.53     4.04
 Rango intercuartilico de la variable objetivo:
- 0.25     949.00
-0.75    5323.25
+ 0.25     950.00
+0.75    5324.25
 Name: price, dtype: float64
 Skewness:
- carat    1.116207
-depth   -0.081726
-table    0.796799
-price    1.618349
-x        0.398348
-y        2.462211
-z        1.585490
+ carat    1.116646
+depth   -0.082294
+table    0.796896
+price    1.618395
+x        0.378676
+y        2.434167
+z        1.522423
 dtype: float64
 Kurtosis:
- carat     1.255240
-depth     5.746307
-table     2.801738
-price     2.178391
-x        -0.703561
-y        91.826238
-z        47.764571
+ carat     1.256635
+depth     5.739415
+table     2.801857
+price     2.177696
+x        -0.618161
+y        91.214557
+z        47.086619
 dtype: float64

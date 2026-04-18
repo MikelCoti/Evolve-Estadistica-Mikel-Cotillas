@@ -6,7 +6,13 @@
 
 ## Ejercicio 1 — Análisis Estadístico Descriptivo
 ---
-Añade aqui tu descripción y analisis:
+Lo primero de todo ha sido simplemente leer el .csv en el que se encontraba el dataset, lo que es muy conveniente porque no hemos tenido que hacer ningún tipo de malabares para cargar los datos, y luego hemos hecho un simple describe de las variables numéricas y las hemos guardado en su propio .csv. También hemos hecho un df.info() para conseguir aún más información no presente en el describe, y luego hemos añadido parte de ella a un dataframe para poder ponerlo en el mismo .csv en el que se encontraba el describe.
+
+Después hemos visto si alguna de las variables dimensionales tenían algún valor nulo, ya que ya hemos visto que no hay ningún NaN, y efectivamente había algunos diamantes con dimensiones nulas. Como eran muy poco diamantes simplemente los hemos quitado. Luego hemos hecho el mismo anñalisis con las variables categóricas para ver si había alguna categoría de más, pero no fue el caso.
+
+Luego hemos calculado distintos estadísticos numéricos (media, mediana, etc...) de las variables numéricas y hemos hecho boxplots de las variables categóricas con respecto al precio, la variable objetivo. También hemos hecho piecharts de las variables categóricas, para ver si había algún desbalanceo, que lo había, pero hemos decidido no tratarlos. 
+
+Por último hemos hecho una matriz de correlación.
 
 ---
 

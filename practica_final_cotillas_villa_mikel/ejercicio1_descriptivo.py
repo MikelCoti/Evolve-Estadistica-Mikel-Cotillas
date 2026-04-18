@@ -3,81 +3,89 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
 
+def data_read():
+    df = pd.read_csv("data/diamonds.csv")   ## Aquí simplemente cargamos los datos
+    return df
 
-df = pd.read_csv("data/diamonds.csv")   ## Aquí simplemente cargamos los datos
-resumen = df.describe(include=[np.number]).T    ## Hacemos la traspuesta para que la tabla sea más legible
-resumen.to_csv("output/ej1_descriptivo.csv", index=True)    ## Lo pasamos a .csv con los nombres de las filas
+def data_resumen(df):
+    resumen = df.describe(include=[np.number]).T    ## Hacemos la traspuesta para que la tabla sea más legible
+    resumen.to_csv("output/ej1_descriptivo.csv", index=True)    ## Lo pasamos a .csv con los nombres de las filas
+    print("Output the df.info(): \n")
+    df.info() ## Este comando nos da el número de NaNs, los dtypes, y el uso en memoria
 
-print("Output the df.info(): \n")
-df.info() ## Este comando nos da el número de NaNs, los dtypes, y el uso en memoria
+def data_info(df):
+    ## Con este dataframe podemos guardar casi toda la información de df.info() en el .csv
+    info_df = pd.DataFrame({
+        "column": df.columns,
+        "non_null_count": df.notna().sum().values,
+        "n_nulls": df.isna().sum().values,
+        "dtype": df.dtypes.astype(str).values
+    })
+    info_df.to_csv("output/ej1_descriptivo.csv", mode="a", header=False, index=False)
 
-## Con este dataframe podemos guardar casi toda la información de df.info() en el .csv
-info_df = pd.DataFrame({
-    "column": df.columns,
-    "non_null_count": df.notna().sum().values,
-    "n_nulls": df.isna().sum().values,
-    "dtype": df.dtypes.astype(str).values
-})
+def valores_nulos(df):
+    ## Esto nos dice si hay valores nulos en las dimensiones
+    print("\nOutput de print((df[['x', 'y', 'z', 'price', 'carat', 'table']] == 0).sum()) \n")
+    print((df[["x", "y", "z", "price", "carat", "table"]] == 0).sum()) 
+    ## Como tenemos varias filas con dimensiones nulas, las eliminamos.
+    df = df[(df[["x", "y", "z"]] != 0).all(axis=1)]
 
-info_df.to_csv("output/ej1_descriptivo.csv", mode="a", header=False, index=False)
+def valores_categoricas(df):
+    ## Ahora vamos a ver si todos los datos categóricos son correctos.
+    print("\n Comprobación de las variables categóricas:\n")
+    print(df["cut"].unique())
+    print(df["clarity"].unique())
+    print(df["color"].unique())
+    ## Hemos comprobado que las variables categóricas no tienen problemas
 
-## Esto nos dice si hay valores nulos en las dimensiones
-print("\nOutput de print((df[['x', 'y', 'z', 'price', 'carat', 'table']] == 0).sum()) \n")
-print((df[["x", "y", "z", "price", "carat", "table"]] == 0).sum()) 
+def metricas_numericas(df):
+    numeric_df = df.select_dtypes(include = "number")   ## Hacemos un dataframe solo con los valores
+                                                        ## numéricos del dataframe original
 
-## Como tenemos varias filas con dimensiones nulas, las eliminamos.
-df = df[(df[["x", "y", "z"]] != 0).all(axis=1)]
+    medias = numeric_df.mean()
+    medianas = numeric_df.median()
+    modas = numeric_df.mode()
+    desviacion_tipica = numeric_df.std()
+    varianza = numeric_df.var()
+    minimo = numeric_df.min()
+    maximo = numeric_df.max()
+    cuartiles = numeric_df.quantile([0.25, 0.5, 0.75]).T
+    iqr_objetivo = numeric_df["price"].quantile([0.25,0.75]).T  ## Rango intercuartílico
+    skewness = numeric_df.skew()
+    kurtosis = numeric_df.kurtosis()
 
-## Ahora vamos a ver si todos los datos categóricos son correctos.
-print("\n Comprobación de las variables categóricas:\n")
-print(df["cut"].unique())
-print(df["clarity"].unique())
-print(df["color"].unique())
-## Hemos comprobado que las variables categóricas no tienen problemas
+    with open("output/ej1_metricas", "w") as f:
+        f.write(f"Medias:\n {medias}\n")
+        f.write(f"Medianas:\n {medianas}\n")
+        f.write(f"Modas:\n {modas}\n")
+        f.write(f"Desviacion tipica:\n {desviacion_tipica}\n")
+        f.write(f"Minimo:\n {minimo}\n")
+        f.write(f"Maximo:\n {maximo}\n")
+        f.write(f"Cuartiles:\n {cuartiles}\n")
+        f.write(f"Rango intercuartilico de la variable objetivo:\n {iqr_objetivo}\n")
+        f.write(f"Skewness:\n {skewness}\n")
+        f.write(f"Kurtosis:\n {kurtosis}\n")
+    return numeric_df
 
-numeric_df = df.select_dtypes(include = "number")   ## Hacemos un dataframe solo con los valores
-                                                    ## numéricos del dataframe original
+def numeric_histogramas(numeric_df):
+    numeric_df.hist(figsize = (12,8), bins = 20)    ## Escogemos bins = 20 porque parece interpretable
+    plt.tight_layout()                              ## para todas las variables
+    plt.savefig("output/ej1_histogramas.png", dpi=300, bbox_inches="tight")
+    plt.close()     ## Para que no aparezcan en pantalla los histogramas
 
-medias = numeric_df.mean()
-medianas = numeric_df.median()
-modas = numeric_df.mode()
-desviacion_tipica = numeric_df.std()
-varianza = numeric_df.var()
-minimo = numeric_df.min()
-maximo = numeric_df.max()
-cuartiles = numeric_df.quantile([0.25, 0.5, 0.75]).T
-iqr_objetivo = numeric_df["price"].quantile([0.25,0.75]).T  ## Rango intercuartílico
-skewness = numeric_df.skew()
-kurtosis = numeric_df.kurtosis()
-
-with open("output/ej1_metricas", "w") as f:
-    f.write(f"Medias:\n {medias}\n")
-    f.write(f"Medianas:\n {medianas}\n")
-    f.write(f"Modas:\n {modas}\n")
-    f.write(f"Desviacion tipica:\n {desviacion_tipica}\n")
-    f.write(f"Minimo:\n {minimo}\n")
-    f.write(f"Maximo:\n {maximo}\n")
-    f.write(f"Cuartiles:\n {cuartiles}\n")
-    f.write(f"Rango intercuartilico de la variable objetivo:\n {iqr_objetivo}\n")
-    f.write(f"Skewness:\n {skewness}\n")
-    f.write(f"Kurtosis:\n {kurtosis}\n")
-
-numeric_df.hist(figsize = (12,8), bins = 20)    ## Escogemos bins = 20 porque parece interpretable
-plt.tight_layout()                              ## para todas las variables
-plt.savefig("output/ej1_histogramas.png", dpi=300, bbox_inches="tight")
-plt.close()     ## Para que no aparezcan en pantalla los histogramas
-
-columnas_categoricas = df.select_dtypes(include = ["str", "object", "category"]).columns   ## .columns devuelve
-                                                                                    ## devuelve el nombre
-                                                                                    ## de las columnas
-                                                                                    ## para hacer el loop
-for columna in columnas_categoricas:
-    plt.figure(figsize = (8, 5))
-    sns.boxplot(data = df, x = columna, y = "price")
-    plt.title(f"Price by {columna}")
-    plt.tight_layout()
-    plt.savefig(f"output/ej1_boxplot_{columna}")
-    plt.close()
+def boxplots_categoricas(df):
+    columnas_categoricas = df.select_dtypes(include = ["str", "object", "category"]).columns   ## .columns devuelve
+                                                                                        ## devuelve el nombre
+                                                                                        ## de las columnas
+                                                                                        ## para hacer el loop
+    for columna in columnas_categoricas:
+        plt.figure(figsize = (8, 5))
+        sns.boxplot(data = df, x = columna, y = "price")
+        plt.title(f"Price by {columna}")
+        plt.tight_layout()
+        plt.savefig(f"output/ej1_boxplot_{columna}")
+        plt.close()
+    return columnas_categoricas
 
 ## Como podemos ver en los boxplots estamos trabajando con un dataset con muchos outliers, 
 ## así que es mejor no usar el z-score. Además los datos no están normalmente distribuidos.
@@ -89,20 +97,34 @@ for columna in columnas_categoricas:
 
 
 ## Ahora trabajaremos con las frecuencias de las variables categóricas.
-for columna in columnas_categoricas:
-    counts = df[columna].value_counts()
-    plt.figure(figsize = (6,6))
-    plt.pie(counts, labels = counts.index, autopct="%1.1f%%", startangle=90)
-    plt.title(f"Pie chart of {columna}")
+def piechart_categoricas(df, columnas_categoricas):
+    for columna in columnas_categoricas:
+        counts = df[columna].value_counts()
+        plt.figure(figsize = (6,6))
+        plt.pie(counts, labels = counts.index, autopct="%1.1f%%", startangle=90)
+        plt.title(f"Pie chart of {columna}")
+        plt.tight_layout()
+        plt.savefig(f"output/ej1_categoricas_{columna}.png", dpi=300, bbox_inches="tight")
+        plt.close()
+
+def matriz_correlacion(numeric_df):
+    corr_matrix = numeric_df.corr(method="pearson")
+
+    plt.figure(figsize=(10, 8))
+    sns.heatmap(corr_matrix, annot=True, cmap="coolwarm", fmt=".2f")
+    plt.title("Heatmap de las correlaciones de Pearson")
     plt.tight_layout()
-    plt.savefig(f"output/ej1_categoricas_{columna}.png", dpi=300, bbox_inches="tight")
+    plt.savefig("output/ej1_heatmap_correlacion.png", dpi=300, bbox_inches="tight")
     plt.close()
 
-corr_matrix = numeric_df.corr(method="pearson")
-
-plt.figure(figsize=(10, 8))
-sns.heatmap(corr_matrix, annot=True, cmap="coolwarm", fmt=".2f")
-plt.title("Heatmap de las correlaciones de Pearson")
-plt.tight_layout()
-plt.savefig("output/ej1_heatmap_correlacion.png", dpi=300, bbox_inches="tight")
-plt.close()
+if __name__ == "__main__":
+    df = data_read()
+    data_resumen(df)
+    data_info(df)
+    valores_nulos(df)
+    valores_categoricas(df)
+    numeric_df = metricas_numericas(df)
+    numeric_histogramas(numeric_df)
+    columnas_categoricas = boxplots_categoricas(df)
+    piechart_categoricas(df, columnas_categoricas)
+    matriz_correlacion(numeric_df)
