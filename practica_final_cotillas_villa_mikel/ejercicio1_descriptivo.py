@@ -4,17 +4,27 @@ import seaborn as sns
 import numpy as np
 
 def data_read():
+    """
+    Esta función no hace más que cargar los datos en un dataframe y devolver el dataframe.
+    """
     df = pd.read_csv("data/diamonds.csv")   ## Aquí simplemente cargamos los datos
     return df
 
 def data_resumen(df):
+    """
+    Esta función pasa los resultados de los datos numéricos de df.describe() a un .csv
+    y luego también pasa por la terminal el resultado de df.info()
+    """
     resumen = df.describe(include=[np.number]).T    ## Hacemos la traspuesta para que la tabla sea más legible
     resumen.to_csv("output/ej1_descriptivo.csv", index=True)    ## Lo pasamos a .csv con los nombres de las filas
     print("Output the df.info(): \n")
     df.info() ## Este comando nos da el número de NaNs, los dtypes, y el uso en memoria
 
 def data_info(df):
-    ## Con este dataframe podemos guardar casi toda la información de df.info() en el .csv
+    """
+    Con este dataframe podemos guardar casi toda la información de df.info() en el .csv
+    donde hemos guardado la información de df.describe()
+    """
     info_df = pd.DataFrame({
         "column": df.columns,
         "non_null_count": df.notna().sum().values,
@@ -24,6 +34,10 @@ def data_info(df):
     info_df.to_csv("output/ej1_descriptivo.csv", mode="a", header=False, index=False)
 
 def valores_nulos(df):
+    """
+    Esta función detecta si hay dimensiones nulas que no tengan sentido, las pasa por la terminal
+    y luego las borra del dataframe, devolviendo el dataframe limpio.
+    """
     ## Esto nos dice si hay valores nulos en las dimensiones
     print("\nOutput de print((df[['x', 'y', 'z', 'price', 'carat', 'table']] == 0).sum()) \n")
     print((df[["x", "y", "z", "price", "carat", "table"]] == 0).sum()) 
@@ -31,6 +45,10 @@ def valores_nulos(df):
     df = df[(df[["x", "y", "z"]] != 0).all(axis=1)]
 
 def valores_categoricas(df):
+    """
+    Esta función simplemente pasa por la terminal las variables categóricas para
+    asegurarnos de que no hay ninguna variable que no debiera estar ahí.
+    """
     ## Ahora vamos a ver si todos los datos categóricos son correctos.
     print("\n Comprobación de las variables categóricas:\n")
     print(df["cut"].unique())
@@ -39,6 +57,11 @@ def valores_categoricas(df):
     ## Hemos comprobado que las variables categóricas no tienen problemas
 
 def metricas_numericas(df):
+    """
+    Esta función coge los datos numéricos de nuestro dataframe y devuelve un nuevo dataframe
+    compuesto solo por ellos, al mismo tiempo que calcula muchas métricas estadísticas de interés
+    y las guarda en un .txt
+    """
     numeric_df = df.select_dtypes(include = "number")   ## Hacemos un dataframe solo con los valores
                                                         ## numéricos del dataframe original
 
@@ -54,7 +77,7 @@ def metricas_numericas(df):
     skewness = numeric_df.skew()
     kurtosis = numeric_df.kurtosis()
 
-    with open("output/ej1_metricas", "w") as f:
+    with open("output/ej1_metricas.txt", "w") as f:
         f.write(f"Medias:\n {medias}\n")
         f.write(f"Medianas:\n {medianas}\n")
         f.write(f"Modas:\n {modas}\n")
@@ -68,12 +91,21 @@ def metricas_numericas(df):
     return numeric_df
 
 def numeric_histogramas(numeric_df):
+    """
+    Esta función simplemente crea una serie de histogramas de nuestras variables numéricas en 
+    una misma imagen.
+    """
     numeric_df.hist(figsize = (12,8), bins = 20)    ## Escogemos bins = 20 porque parece interpretable
     plt.tight_layout()                              ## para todas las variables
     plt.savefig("output/ej1_histogramas.png", dpi=300, bbox_inches="tight")
     plt.close()     ## Para que no aparezcan en pantalla los histogramas
 
 def boxplots_categoricas(df):
+    """
+    Esta función escoge las variables categóricas del dataframe para poder iterar sobre ellas
+    y hacer así varios boxplots con respecto al precio para ver si hay algún patrón concreto.
+    También devuelve las columnas categóricas para poder usarlas en la siguiente función.
+    """
     columnas_categoricas = df.select_dtypes(include = ["str", "object", "category"]).columns   ## .columns devuelve
                                                                                         ## devuelve el nombre
                                                                                         ## de las columnas
@@ -98,6 +130,10 @@ def boxplots_categoricas(df):
 
 ## Ahora trabajaremos con las frecuencias de las variables categóricas.
 def piechart_categoricas(df, columnas_categoricas):
+    """
+    Esta función simplemente crea varios piecharts de las variables categóricas con las
+    columnas que devuelve la función anterior. También require del dataframe original.
+    """
     for columna in columnas_categoricas:
         counts = df[columna].value_counts()
         plt.figure(figsize = (6,6))
@@ -108,6 +144,11 @@ def piechart_categoricas(df, columnas_categoricas):
         plt.close()
 
 def matriz_correlacion(numeric_df):
+    """
+    Esta función no hace más que guardar en un gráfico la matriz de correlaciones de las
+    variables numéricas.
+    """
+
     corr_matrix = numeric_df.corr(method="pearson")
 
     plt.figure(figsize=(10, 8))

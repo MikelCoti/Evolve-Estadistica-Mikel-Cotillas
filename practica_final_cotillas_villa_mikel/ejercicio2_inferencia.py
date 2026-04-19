@@ -13,6 +13,11 @@ import scipy.stats as stats
 
 ## Leemos los datos y quitamos los 0s sin significado.
 def data_read():
+    """
+    Esta función lee el csv y lo guarda como un dataframe para luego devolverlo.
+    Podríamos haber importado esta función del ejercicio anterior, pero no quería andarme
+    con líos. También quita las dimensiones nulas.
+    """
     df = pd.read_csv("data/diamonds.csv")
     df = df[(df[["x", "y", "z"]] != 0).all(axis=1)]
     return df
@@ -21,6 +26,15 @@ def data_read():
 ## escala numérica. La limitación que tiene esto es que estamos asumiendo que cada mejora en 
 ## escala es de la misma "cantidad", es decir, que las escalas son lineales.
 def codificar_df(df):
+    """
+    Esta función codifica las variables categóricas ordinales de forma numérica. Una limitación
+    que tiene esta forma de proceder es que se está implícitamente asumiendo que un incremento
+    en la claridad, por ejemplo, es igual independientemente de qué claridad sea la que se 
+    está incrementando.
+    Luego lo que hace es quitar las columnas categóricas originales ahora que las tenemos
+    codificadas como ordinales, y por último borramos las variables que están muy correlacionadas
+    entre sí para evitar la multicolinearidad.
+    """
     mapa_calidad = {"Fair" : 1, "Good" : 2, "Very Good" : 3, "Premium" : 4, "Ideal" : 5}
     mapa_claridad = {"I1" : 1, "SI2" : 2, "SI1" : 3, "VS2" : 4, "VS1" : 5, "VVS2" : 6, "VVS1" : 7, "IF" : 8}
     mapa_color = {"J" : 1, "I" : 2, "H" : 3, "G" : 4, "F" : 5, "E" : 6, "D" : 7}
@@ -40,6 +54,10 @@ def codificar_df(df):
 
 
 def matriz_correlacion(df_encoded_dropped):
+    """
+    Esta función no hace más que dibujar la nueva matriz de correlaciones una vez hemos eliminado
+    las multicolinearidades.
+    """
     corr_matrix = df_encoded_dropped.select_dtypes(include = "number").corr(method="pearson")
 
     plt.figure(figsize=(10, 8))
@@ -53,10 +71,18 @@ def matriz_correlacion(df_encoded_dropped):
 ## coger el logaritmo de los precios para mayor estabilidad numérica.
 
 def transform_price(df_encoded_dropped):
+    """
+    Esta función escala el precio con el logaritmo neperiano.
+    """
     df_encoded_dropped["price"] = np.log(df_encoded_dropped["price"])
     return df_encoded_dropped
 
 def regresion_lineal(df_encoded_dropped):
+    """
+    Esta función primero hace una regresión lineal tras separar el dataframe en un train/test split.
+    Luego calcula los errores y los guarda en un .txt, y por último hace un gráfico de los 
+    residuos, que también devuelve para poder usarlos luego.
+    """
     predictors = df_encoded_dropped.drop(columns = "price")
     target = df_encoded_dropped["price"]
 
@@ -100,6 +126,10 @@ def regresion_lineal(df_encoded_dropped):
 ## Como podemos ver en la gráfica y en las métricas, el resultado ha mejorado.
 
 def regresion_lineal_carat2(df, df_encoded_dropped):
+    """
+    Aquí hacemos lo mismo que antes pero añadiendo un término no lineal, carat^2. También
+    devuelve los residuos.
+    """
     df_encoded_dropped["carat2"] = df["carat"]**2
 
     predictors = df_encoded_dropped.drop(columns = "price")
@@ -142,6 +172,10 @@ def regresion_lineal_carat2(df, df_encoded_dropped):
 from scipy.stats import jarque_bera
 
 def test_jb(residuos):
+    """
+    Esta función simplemente pasa por la terminal si los residuos en cuestión siguen la 
+    distribución normal alrededor del 0.
+    """
     jb_stat, jb_pvalue = jarque_bera(residuos)
 
     print("Jarque-Bera statistic:", jb_stat)
@@ -152,6 +186,10 @@ def test_jb(residuos):
 from scipy.stats import norm
 
 def histograma_residuos(residuos):
+    """
+    Esta función hace un histograma y lo compara con una distribución normal y luego
+    guarda la imagen.
+    """
     mu = residuos.mean()
     sigma = residuos.std(ddof=1)
 
@@ -174,6 +212,10 @@ def histograma_residuos(residuos):
 ## término no lineal a nuestra regresión, pero no se me ocurre cuál, así que dejaré el trabajo así.
 
 def qq_plot_residuos(residuos):
+    """
+    Esta función hace un Q-Q plot (explico lo que es en el Respuestas.md) para ver si realmente
+    los residuos siguen una distribución normal o no, y guarda la imagen.
+    """
     fig, ax = plt.subplots(figsize=(6, 6))
     stats.probplot(residuos, dist="norm", plot=ax)
     ax.set_title("Q-Q plot de los residuos con carat2")
